@@ -27,17 +27,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
 
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    ports:
-      - "3307:3306" # map host 3307 to container 3306 to avoid clashing with a local MySQL
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    volumes:
-      - ./mysql-init:/docker-entrypoint-initdb.d
-    command: --default-authentication-plugin=mysql_native_password
-
   # Optional: Kafka UI for easier debugging
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -58,8 +47,6 @@ services:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=local
-    depends_on:
-      - mysql
 
   config-server:
     build:
@@ -94,7 +81,6 @@ services:
       - SERVER_FORWARD_HEADERS_STRATEGY=framework
     depends_on:
       - service-registry
-      - mysql
 
   user-service:
     build:
@@ -104,14 +90,14 @@ services:
       - "8083:8083"
     environment:
       - EUREKA_SERVER_URL=http://service-registry:8761/eureka/
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/user_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/user_db
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_PASSWORD=password
       - SERVER_FORWARD_HEADERS_STRATEGY=framework
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - service-registry
-      - mysql
+      - kafka
 
   wallet-service:
     build:
@@ -121,14 +107,14 @@ services:
       - "8082:8082"
     environment:
       - EUREKA_SERVER_URL=http://service-registry:8761/eureka/
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/wallet_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/wallet_db
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_PASSWORD=password
       - SERVER_FORWARD_HEADERS_STRATEGY=framework
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - service-registry
-      - mysql
+      - kafka
 
   transaction-service:
     build:
@@ -138,14 +124,14 @@ services:
       - "8086:8083" # host 8086 -> container 8083
     environment:
       - EUREKA_SERVER_URL=http://service-registry:8761/eureka/
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/transaction_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/transaction_db
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_PASSWORD=password
       - SERVER_FORWARD_HEADERS_STRATEGY=framework
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - service-registry
-      - mysql
+      - kafka
 
   notification-service:
     build:
@@ -169,11 +155,11 @@ services:
       - "8085:8085"
     environment:
       - EUREKA_SERVER_URL=http://service-registry:8761/eureka/
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/audit_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/audit_db
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_PASSWORD=password
       - SERVER_FORWARD_HEADERS_STRATEGY=framework
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - service-registry
-      - mysql
+      - kafka

@@ -11,6 +11,7 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+        # Auth Service
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
@@ -18,6 +19,14 @@ spring:
           filters:
             - RewritePath=/auth/(?<segment>.*), /${segment}
 
+        - id: auth-service-docs
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/v3/api-docs/auth-service
+          filters:
+            - RewritePath=/v3/api-docs/auth-service, /v3/api-docs
+
+        # User Service
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
@@ -25,6 +34,14 @@ spring:
           filters:
             - RewritePath=/api/v1/users/(?<segment>.*), /${segment}
 
+        - id: user-service-docs
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/v3/api-docs/user-service
+          filters:
+            - RewritePath=/v3/api-docs/user-service, /v3/api-docs
+
+        # Wallet Service
         - id: wallet-service
           uri: lb://WALLET-SERVICE
           predicates:
@@ -32,6 +49,14 @@ spring:
           filters:
             - RewritePath=/api/v1/wallets/(?<segment>.*), /${segment}
 
+        - id: wallet-service-docs
+          uri: lb://WALLET-SERVICE
+          predicates:
+            - Path=/v3/api-docs/wallet-service
+          filters:
+            - RewritePath=/v3/api-docs/wallet-service, /v3/api-docs
+
+        # Transaction Service
         - id: transaction-service
           uri: lb://TRANSACTION-SERVICE
           predicates:
@@ -39,6 +64,14 @@ spring:
           filters:
             - RewritePath=/api/v1/transactions/(?<segment>.*), /${segment}
 
+        - id: transaction-service-docs
+          uri: lb://TRANSACTION-SERVICE
+          predicates:
+            - Path=/v3/api-docs/transaction-service
+          filters:
+            - RewritePath=/v3/api-docs/transaction-service, /v3/api-docs
+
+        # Notification Service
         - id: notification-service
           uri: lb://NOTIFICATION-SERVICE
           predicates:
@@ -46,6 +79,14 @@ spring:
           filters:
             - RewritePath=/api/v1/notifications/(?<segment>.*), /${segment}
 
+        - id: notification-service-docs
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/v3/api-docs/notification-service
+          filters:
+            - RewritePath=/v3/api-docs/notification-service, /v3/api-docs
+
+        # Audit Service
         - id: audit-service
           uri: lb://AUDIT-SERVICE
           predicates:
@@ -53,23 +94,31 @@ spring:
           filters:
             - RewritePath=/api/v1/audits/(?<segment>.*), /${segment}
 
+        - id: audit-service-docs
+          uri: lb://AUDIT-SERVICE
+          predicates:
+            - Path=/v3/api-docs/audit-service
+          filters:
+            - RewritePath=/v3/api-docs/audit-service, /v3/api-docs
+
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER_URL:http://service-registry:8761/eureka/}
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
 
 springdoc:
   swagger-ui:
     urls:
-      - name: auth-service
+      - name: Auth Service
         url: /v3/api-docs/auth-service
-      - name: user-service
+      - name: User Service
         url: /v3/api-docs/user-service
-      - name: wallet-service
+      - name: Wallet Service
         url: /v3/api-docs/wallet-service
-      - name: transaction-service
+      - name: Transaction Service
         url: /v3/api-docs/transaction-service
-      - name: notification-service
+      - name: Notification Service
         url: /v3/api-docs/notification-service
-      - name: audit-service
+      - name: Audit Service
         url: /v3/api-docs/audit-service
+    path: /swagger-ui.html
