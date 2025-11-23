@@ -31,7 +31,7 @@ services:
     image: mysql:8.0
     container_name: mysql
     ports:
-      - "3306:3306"
+      - "3307:3306" # map host 3307 to container 3306 to avoid clashing with a local MySQL
     environment:
       MYSQL_ROOT_PASSWORD: root
     volumes:
@@ -108,6 +108,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - SERVER_FORWARD_HEADERS_STRATEGY=framework
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - service-registry
       - mysql
@@ -124,6 +125,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - SERVER_FORWARD_HEADERS_STRATEGY=framework
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - service-registry
       - mysql
@@ -140,6 +142,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - SERVER_FORWARD_HEADERS_STRATEGY=framework
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - service-registry
       - mysql
@@ -153,6 +156,7 @@ services:
     environment:
       - EUREKA_SERVER_URL=http://service-registry:8761/eureka/
       - SERVER_FORWARD_HEADERS_STRATEGY=framework
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - service-registry
       - kafka
@@ -169,6 +173,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
       - SERVER_FORWARD_HEADERS_STRATEGY=framework
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     depends_on:
       - service-registry
       - mysql

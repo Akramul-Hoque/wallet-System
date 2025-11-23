@@ -1,6 +1,6 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
-COPY pom.xml mvnw .mvn ./
+COPY pom.xml ./
 COPY . .
 RUN mvn -DskipTests package -B -e
 
